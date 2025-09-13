@@ -11,6 +11,7 @@ import {
   Cog6ToothIcon,
   CalendarDaysIcon,
   UserGroupIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -30,6 +31,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     // Admin routes
     { name: 'Manage Leaves', href: '/admin/leaves', icon: CalendarDaysIcon, roles: ['admin'] },
     { name: 'Leave Allocation', href: '/admin/leave-allocation', icon: UserGroupIcon, roles: ['admin'] },
+    { name: 'Leave Categories', href: '/admin/leave-categories', icon: TagIcon, roles: ['admin'] },
     { name: 'All Doctors', href: '/doctors', icon: UsersIcon, roles: ['admin'] },
     
     // Common routes

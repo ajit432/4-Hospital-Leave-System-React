@@ -6,6 +6,8 @@ const AuthContext = createContext();
 
 // Auth reducer
 const authReducer = (state, action) => {
+  console.log('🔍 line 9 authContext file Current State:', state);
+  console.log('📋 line 10 authContext file Action:', action);
   switch (action.type) {
     case 'SET_LOADING':
       return { ...state, loading: action.payload };

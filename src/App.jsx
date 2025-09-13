@@ -20,6 +20,7 @@ import DoctorsList from './pages/DoctorsList';
 import AdminLeaves from './pages/AdminLeaves';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLeaveAllocation from './pages/AdminLeaveAllocation';
+import AdminLeaveCategories from './pages/AdminLeaveCategories';
 import Settings from './pages/Settings';
 
 const AppContent = () => {
@@ -97,6 +98,14 @@ const AppContent = () => {
               <ProtectedRoute roles={['admin']}>
                 <DashboardLayout>
                   <AdminLeaveAllocation />
+                </DashboardLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/leave-categories" element={
+              <ProtectedRoute roles={['admin']}>
+                <DashboardLayout>
+                  <AdminLeaveCategories />
                 </DashboardLayout>
               </ProtectedRoute>
             } />

@@ -54,20 +54,62 @@ const AdminLeaveAllocation = () => {
   const fetchDoctorBalance = async (doctorId, year = currentYear) => {
     try {
       setLoadingBalance(true);
+      console.log(`🔍 Fetching balance for doctor ${doctorId}, year ${year}`);
       const response = await leaveAPI.getDoctorLeaveBalance(doctorId, { year });
-      setDoctorBalance(response.data.data.balance);
+      console.log('📊 Balance response:', response.data.data);
+      console.log('📊 Balance array length:', response.data.data.balance.length);
+      console.log('📊 Balance content:', response.data.data.balance);
+      
+      // Force set to empty array if no data from database
+      if (!response.data.data.balance || response.data.data.balance.length === 0) {
+        console.log('⚠️ No balance data from database, setting empty array');
+        setDoctorBalance([]);
+      } else {
+        console.log('✅ Setting balance data from database');
+        setDoctorBalance(response.data.data.balance);
+      }
       setSelectedDoctor(response.data.data.doctor);
     } catch (error) {
+      console.error('❌ Failed to load doctor balance:', error);
       toast.error('Failed to load doctor leave balance');
+      // Clear balance if failed to fetch
+      setDoctorBalance([]);
     } finally {
       setLoadingBalance(false);
     }
   };
 
   const handleViewBalance = (doctor) => {
+    console.log('🔍 Opening balance modal for doctor:', doctor);
     setSelectedDoctor(doctor);
-    fetchDoctorBalance(doctor.id, currentYear);
+    setDoctorBalance([]); // Clear previous balance data
     setShowViewModal(true);
+    // Force a fresh fetch with a small delay to ensure modal is open
+    setTimeout(() => {
+      fetchDoctorBalance(doctor.id, currentYear);
+    }, 100);
+  };
+
+  const forceClearAndRefresh = () => {
+    // Clear all state
+    setDoctorBalance([]);
+    setSelectedDoctor(null);
+    
+    // Clear any potential browser cache
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => {
+          caches.delete(name);
+        });
+      });
+    }
+    
+    // Force reload data if modal is open
+    if (showViewModal && selectedDoctor) {
+      fetchDoctorBalance(selectedDoctor.id, currentYear);
+    }
+    
+    toast.success('Cache cleared and data refreshed');
   };
 
   const handleSetAllocation = (doctor, category = null) => {
@@ -159,88 +201,123 @@ const AdminLeaveAllocation = () => {
       </Card>
 
       {/* Doctors List */}
-      <Card>
-        <Card.Header>
-          <Card.Title>Doctors ({doctors.length})</Card.Title>
-        </Card.Header>
-        <Card.Content>
-          {doctors.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">👥</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
-              <p className="text-gray-600">No doctors are registered in the system yet</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Doctor
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Employee ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Department
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {doctors.map((doctor) => (
-                    <tr key={doctor.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {doctor.name}
+      <div>
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Doctors ({doctors.length})</h2>
+        </div>
+        
+        {doctors.length === 0 ? (
+          <Card>
+            <Card.Content>
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">👥</div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
+                <p className="text-gray-600">No doctors are registered in the system yet</p>
+              </div>
+            </Card.Content>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {doctors.map((doctor) => (
+              <Card key={doctor.id} className="hover:shadow-md transition-shadow duration-200">
+                <Card.Content className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 space-y-3">
+                      {/* Header Row */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                              <span className="text-blue-600 font-semibold text-sm">
+                                {doctor.name.charAt(0)}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {doctor.name}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              {doctor.email}
+                            </p>
+                          </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {doctor.employee_id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {doctor.department}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {doctor.email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          icon={EyeIcon}
-                          onClick={() => handleViewBalance(doctor)}
-                        >
-                          View Balance
-                        </Button>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          icon={PlusIcon}
-                          onClick={() => handleSetAllocation(doctor)}
-                        >
-                          Set Allocation
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card.Content>
-      </Card>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            icon={EyeIcon}
+                            onClick={() => handleViewBalance(doctor)}
+                          >
+                            View Balance
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            icon={PlusIcon}
+                            onClick={() => handleSetAllocation(doctor)}
+                          >
+                            Set Allocation
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Details Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                        <div>
+                          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                            Employee ID
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900">
+                            {doctor.employee_id}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                            Department
+                          </div>
+                          <div className="text-sm text-gray-900">
+                            {doctor.department}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card.Content>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* View Balance Modal */}
       <Modal
         isOpen={showViewModal}
         onClose={() => setShowViewModal(false)}
-        title={`Leave Balance - ${selectedDoctor?.name} (${currentYear})`}
+        title={
+          <div className="flex items-center justify-between">
+            <span>{`Leave Balance - ${selectedDoctor?.name} (${currentYear})`}</span>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => selectedDoctor && fetchDoctorBalance(selectedDoctor.id, currentYear)}
+                disabled={loadingBalance}
+              >
+                {loadingBalance ? 'Refreshing...' : 'Refresh'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={forceClearAndRefresh}
+                disabled={loadingBalance}
+                className="text-red-600 border-red-300 hover:bg-red-50"
+              >
+                Clear Cache
+              </Button>
+            </div>
+          </div>
+        }
         size="lg"
       >
         <div className="space-y-4">
@@ -371,7 +448,7 @@ const AdminLeaveAllocation = () => {
                 <option value="">Select leave category</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {category.name} (Max: {category.max_days} days)
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -383,19 +460,13 @@ const AdminLeaveAllocation = () => {
               </label>
               <Input
                 type="number"
-                min="0"
-                max={getSelectedCategory()?.max_days || 365}
+                min="1"
                 value={allocationData.total_days}
                 onChange={(e) =>
                   setAllocationData({ ...allocationData, total_days: e.target.value })
                 }
                 placeholder="Enter total days"
               />
-              {getSelectedCategory() && (
-                <p className="text-xs text-gray-600 mt-1">
-                  Maximum allowed: {getSelectedCategory().max_days} days
-                </p>
-              )}
             </div>
 
             <div>

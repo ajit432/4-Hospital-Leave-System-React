@@ -71,13 +71,13 @@ export const isValidImageFile = (file) => {
 export const getStatusClass = (status) => {
   switch (status?.toLowerCase()) {
     case 'pending':
-      return 'status-pending';
+      return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
     case 'approved':
-      return 'status-approved';
+      return 'bg-green-100 text-green-800 border border-green-200';
     case 'rejected':
-      return 'status-rejected';
+      return 'bg-red-100 text-red-800 border border-red-200';
     default:
-      return 'status-badge bg-gray-100 text-gray-800';
+      return 'bg-gray-100 text-gray-800 border border-gray-200';
   }
 };
 

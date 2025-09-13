@@ -89,9 +89,18 @@ export const leaveAPI = {
   reviewLeave: (id, reviewData) => api.put(`/leave/${id}/review`, reviewData),
   // Admin specific endpoints
   getAllDoctors: () => api.get('/leave/doctors'),
-  getDoctorLeaveBalance: (doctorId, params) => api.get(`/leave/doctors/${doctorId}/balance`, { params }),
+  getDoctorLeaveBalance: (doctorId, params) => api.get(`/leave/doctors/${doctorId}/balance`, { 
+    params: { 
+      ...params, 
+      _t: Date.now() // Cache busting parameter 
+    } 
+  }),
   setDoctorLeaveAllocation: (doctorId, allocationData) => api.put(`/leave/doctors/${doctorId}/allocation`, allocationData),
   getLeaveSummary: (params) => api.get('/leave/summary', { params }),
+  // Leave category management (admin only)
+  createLeaveCategory: (categoryData) => api.post('/leave/categories', categoryData),
+  updateLeaveCategory: (id, categoryData) => api.put(`/leave/categories/${id}`, categoryData),
+  deleteLeaveCategory: (id) => api.delete(`/leave/categories/${id}`),
 };
 
 export default api;

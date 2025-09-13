@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 
 const ApplyLeave = () => {
   const [categories, setCategories] = useState([]);
+  const [leaveBalance, setLeaveBalance] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -20,15 +21,48 @@ const ApplyLeave = () => {
     formState: { errors },
     watch,
     reset,
+    setError,
+    clearErrors,
   } = useForm();
 
   const startDate = watch('start_date');
   const endDate = watch('end_date');
+  const categoryId = watch('category_id');
   const totalDays = startDate && endDate ? calculateDaysBetween(startDate, endDate) : 0;
+  
+  // Get selected category details
+  const selectedCategory = categories.find(cat => cat.id === parseInt(categoryId));
+  const maxDaysForCategory = selectedCategory?.max_days || 0;
+  
+  // Get balance for selected category
+  const selectedCategoryBalance = leaveBalance.find(balance => balance.category_id === parseInt(categoryId));
+  const remainingDays = selectedCategoryBalance?.remaining_days || 0;
 
   useEffect(() => {
     fetchCategories();
+    fetchLeaveBalance();
   }, []);
+
+  // Real-time validation for max days and balance
+  useEffect(() => {
+    if (totalDays > 0 && selectedCategory) {
+      if (totalDays > maxDaysForCategory) {
+        setError('totalDays', {
+          type: 'maxDays',
+          message: `Total days (${totalDays}) exceed the maximum allowed (${maxDaysForCategory}) for ${selectedCategory.name}`
+        });
+      } else if (selectedCategoryBalance && totalDays > remainingDays) {
+        setError('totalDays', {
+          type: 'insufficientBalance',
+          message: `Insufficient leave balance. You have ${remainingDays} days remaining for ${selectedCategory.name}`
+        });
+      } else {
+        clearErrors('totalDays');
+      }
+    } else {
+      clearErrors('totalDays');
+    }
+  }, [totalDays, maxDaysForCategory, selectedCategory, selectedCategoryBalance, remainingDays, setError, clearErrors]);
 
   const fetchCategories = async () => {
     try {
@@ -42,12 +76,36 @@ const ApplyLeave = () => {
     }
   };
 
+  const fetchLeaveBalance = async () => {
+    try {
+      const response = await leaveAPI.getLeaveBalance();
+      setLeaveBalance(response.data.data.balance);
+    } catch (error) {
+      console.log('Failed to load leave balance:', error);
+      // Don't show error toast as some doctors might not have allocations yet
+      setLeaveBalance([]);
+    }
+  };
+
   const onSubmit = async (data) => {
+    // Additional frontend validation before submission
+    if (totalDays > maxDaysForCategory) {
+      toast.error(`Cannot apply for ${totalDays} days. Maximum allowed for ${selectedCategory?.name} is ${maxDaysForCategory} days.`);
+      return;
+    }
+
+    if (selectedCategoryBalance && totalDays > remainingDays) {
+      toast.error(`Insufficient leave balance. You have ${remainingDays} days remaining for ${selectedCategory?.name}.`);
+      return;
+    }
+
     try {
       setSubmitting(true);
       await leaveAPI.applyLeave(data);
       toast.success('Leave application submitted successfully!');
       reset();
+      // Refresh balance after successful submission
+      fetchLeaveBalance();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to submit leave application');
     } finally {
@@ -101,6 +159,32 @@ const ApplyLeave = () => {
                       </option>
                     ))}
                   </select>
+                  {selectedCategory && (
+                    <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div><strong>Selected:</strong> {selectedCategory.name}</div>
+                          <div className="mt-1">Maximum: {selectedCategory.max_days} days per category</div>
+                          {selectedCategory.description && (
+                            <div className="mt-1 text-xs">{selectedCategory.description}</div>
+                          )}
+                        </div>
+                        {selectedCategoryBalance && (
+                          <div className="text-right">
+                            <div className="text-xs text-gray-500">Your Allocation</div>
+                            <div className="font-medium text-green-600">
+                              {remainingDays} of {selectedCategoryBalance.total_days} days remaining
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {!selectedCategoryBalance && (
+                        <div className="mt-2 text-xs text-amber-600">
+                          ℹ️ No specific allocation found for this category. You can apply up to the category maximum.
+                        </div>
+                      )}
+                    </div>
+                  )}
                   {errors.category_id && (
                     <p className="mt-1 text-sm text-red-600">{errors.category_id.message}</p>
                   )}
@@ -135,10 +219,30 @@ const ApplyLeave = () => {
                 </div>
 
                 {totalDays > 0 && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
+                  <div className={`p-3 border rounded-lg ${
+                    errors.totalDays 
+                      ? 'bg-red-50 border-red-200' 
+                      : totalDays > maxDaysForCategory && maxDaysForCategory > 0
+                        ? 'bg-yellow-50 border-yellow-200'
+                        : 'bg-blue-50 border-blue-200'
+                  }`}>
+                    <p className={`text-sm ${
+                      errors.totalDays 
+                        ? 'text-red-800' 
+                        : totalDays > maxDaysForCategory && maxDaysForCategory > 0
+                          ? 'text-yellow-800'
+                          : 'text-blue-800'
+                    }`}>
                       <strong>Total Leave Days:</strong> {totalDays} day{totalDays > 1 ? 's' : ''}
+                      {selectedCategory && (
+                        <span className="ml-2">
+                          (Max for {selectedCategory.name}: {maxDaysForCategory} days)
+                        </span>
+                      )}
                     </p>
+                    {errors.totalDays && (
+                      <p className="mt-1 text-sm text-red-600">{errors.totalDays.message}</p>
+                    )}
                   </div>
                 )}
 
@@ -179,7 +283,12 @@ const ApplyLeave = () => {
                     type="submit"
                     icon={CalendarIcon}
                     loading={submitting}
-                    disabled={submitting}
+                    disabled={
+                      submitting || 
+                      errors.totalDays || 
+                      (totalDays > maxDaysForCategory && maxDaysForCategory > 0) ||
+                      (selectedCategoryBalance && totalDays > remainingDays)
+                    }
                   >
                     Submit Application
                   </Button>
@@ -189,27 +298,79 @@ const ApplyLeave = () => {
           </Card>
         </div>
 
-        {/* Leave Categories Info */}
+        {/* Leave Balance & Categories Info */}
         <div>
+          {/* Leave Balance */}
+          {leaveBalance.length > 0 && (
+            <Card className="mb-6">
+              <Card.Header>
+                <Card.Title>Your Leave Balance</Card.Title>
+              </Card.Header>
+              <Card.Content>
+                <div className="space-y-3">
+                  {leaveBalance.map((balance) => (
+                    <div key={balance.category_id} className="p-3 border border-gray-200 rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium text-gray-900">{balance.category_name}</h4>
+                        <span className="text-sm font-medium text-green-600">
+                          {balance.remaining_days} days left
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-600 mb-2">
+                        {balance.used_days} used of {balance.total_days} allocated
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-primary-600 h-2 rounded-full"
+                          style={{
+                            width: `${balance.total_days > 0 ? (balance.used_days / balance.total_days) * 100 : 0}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card.Content>
+            </Card>
+          )}
+
+          {/* Leave Categories */}
           <Card>
             <Card.Header>
-              <Card.Title>Leave Categories</Card.Title>
+              <Card.Title>Available Leave Categories</Card.Title>
             </Card.Header>
             <Card.Content>
               <div className="space-y-4">
-                {categories.map((category) => (
-                  <div key={category.id} className="p-3 border border-gray-200 rounded-lg">
-                    <h4 className="font-medium text-gray-900">{category.name}</h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Max: {category.max_days} days
-                    </p>
-                    {category.description && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        {category.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                {categories.map((category) => {
+                  const categoryBalance = leaveBalance.find(b => b.category_id === category.id);
+                  return (
+                    <div key={category.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium text-gray-900">{category.name}</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Max: {category.max_days} days per category
+                          </p>
+                          {category.description && (
+                            <p className="text-xs text-gray-500 mt-2">
+                              {category.description}
+                            </p>
+                          )}
+                        </div>
+                        {categoryBalance && (
+                          <div className="text-right text-sm">
+                            <div className="font-medium text-green-600">
+                              {categoryBalance.remaining_days} available
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              of {categoryBalance.total_days} allocated
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </Card.Content>
           </Card>

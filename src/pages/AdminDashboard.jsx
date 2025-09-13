@@ -5,7 +5,8 @@ import {
   XCircleIcon, 
   ClockIcon,
   UserGroupIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { leaveAPI } from '../services/api';
 import Card from '../components/common/Card';
@@ -300,7 +301,7 @@ const AdminDashboard = () => {
           <Card.Title>Quick Actions</Card.Title>
         </Card.Header>
         <Card.Content>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Button
               variant="outline"
               className="h-16 flex flex-col items-center justify-center space-y-1"
@@ -322,6 +323,15 @@ const AdminDashboard = () => {
             >
               <UserGroupIcon className="w-6 h-6" />
               <span>Manage Allocations</span>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="h-16 flex flex-col items-center justify-center space-y-1"
+              onClick={() => window.location.href = '/admin/leave-categories'}
+            >
+              <TagIcon className="w-6 h-6" />
+              <span>Leave Categories</span>
             </Button>
             
             <Button
