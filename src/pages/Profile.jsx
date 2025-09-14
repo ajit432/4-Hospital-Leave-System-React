@@ -274,7 +274,7 @@ const Profile = () => {
               />
             </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-4 mt-6">
               <Button
                 type="button"
                 variant="outline"

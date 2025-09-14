@@ -42,7 +42,7 @@ const Settings = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
-                      <div className="w-6 h-6 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-full flex items-center justify-center">
                         <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                       </div>
                     </div>
@@ -73,8 +73,8 @@ const Settings = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
-                      <div className="w-6 h-6 bg-gray-800 border-2 border-gray-600 rounded-full flex items-center justify-center">
-                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+                      <div className="w-6 h-6 bg-gray-800 dark:bg-gray-700 border-2 border-gray-600 dark:border-gray-500 rounded-full flex items-center justify-center">
+                        <div className="w-3 h-3 bg-gray-300 dark:bg-gray-200 rounded-full"></div>
                       </div>
                     </div>
                     <div>
@@ -98,7 +98,7 @@ const Settings = () => {
         </Card.Content>
       </Card>
 
-      <Card>
+      {/* <Card>
         <Card.Header>
           <Card.Title>Account Settings</Card.Title>
         </Card.Header>
@@ -111,7 +111,7 @@ const Settings = () => {
             </p>
           </div>
         </Card.Content>
-      </Card>
+      </Card> */}
     </div>
   );
 };

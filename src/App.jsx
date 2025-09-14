@@ -33,7 +33,13 @@ const AppContent = () => {
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            
+            {/* Admin only routes */}
+            <Route path="/register" element={
+              <ProtectedRoute roles={['admin']}>
+                <Register />
+              </ProtectedRoute>
+            } />
             
             {/* Protected routes */}
             <Route path="/" element={<ProtectedRoute><RoleBasedRedirect /></ProtectedRoute>} />

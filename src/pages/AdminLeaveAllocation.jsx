@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { leaveAPI } from '../services/api';
+import { leaveAPI, doctorAPI } from '../services/api';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import Input from '../components/common/Input';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { getAvatarFallback } from '../utils/helpers';
 import { toast } from 'react-toastify';
 
 const AdminLeaveAllocation = () => {
@@ -33,7 +34,7 @@ const AdminLeaveAllocation = () => {
   const fetchDoctors = async () => {
     try {
       setLoading(true);
-      const response = await leaveAPI.getAllDoctors();
+      const response = await doctorAPI.getAllDoctors('active');
       setDoctors(response.data.data.doctors);
     } catch (error) {
       toast.error('Failed to load doctors');
@@ -166,8 +167,8 @@ const AdminLeaveAllocation = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Leave Allocation Management</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Leave Allocation Management</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Manage and allocate leave days for doctors by category
         </p>
       </div>
@@ -176,7 +177,7 @@ const AdminLeaveAllocation = () => {
       <Card>
         <Card.Content className="py-4">
           <div className="flex items-center space-x-4">
-            <label className="text-sm font-medium text-gray-700">Year:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Year:</label>
             <select
               value={currentYear}
               onChange={(e) => {
@@ -203,91 +204,104 @@ const AdminLeaveAllocation = () => {
       {/* Doctors List */}
       <div>
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Doctors ({doctors.length})</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Active Doctors ({doctors.length})</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Only active doctors are shown for leave allocation</p>
         </div>
         
-        {doctors.length === 0 ? (
-          <Card>
-            <Card.Content>
+        <Card>
+          <Card.Content className="p-0">
+            {doctors.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">👥</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
-                <p className="text-gray-600">No doctors are registered in the system yet</p>
+                <div className="text-gray-400 dark:text-gray-500 text-6xl mb-4">👥</div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No active doctors found</h3>
+                <p className="text-gray-600 dark:text-gray-400">No active doctors are available for leave allocation</p>
               </div>
-            </Card.Content>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {doctors.map((doctor) => (
-              <Card key={doctor.id} className="hover:shadow-md transition-shadow duration-200">
-                <Card.Content className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-3">
-                      {/* Header Row */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex-shrink-0">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-600 font-semibold text-sm">
-                                {doctor.name.charAt(0)}
-                              </span>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Doctor
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Employee ID
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Department
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {doctors.map((doctor) => (
+                      <tr key={doctor.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                                  {getAvatarFallback(doctor.name)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {doctor.name}
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900">
-                              {doctor.name}
-                            </h3>
-                            <p className="text-sm text-gray-500">
-                              {doctor.email}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            icon={EyeIcon}
-                            onClick={() => handleViewBalance(doctor)}
-                          >
-                            View Balance
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            icon={PlusIcon}
-                            onClick={() => handleSetAllocation(doctor)}
-                          >
-                            Set Allocation
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Details Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-                        <div>
-                          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                            Employee ID
-                          </div>
-                          <div className="text-sm font-semibold text-gray-900">
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {doctor.employee_id}
                           </div>
-                        </div>
-                        <div>
-                          <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                            Department
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
+                            {doctor.department || 'Not specified'}
                           </div>
-                          <div className="text-sm text-gray-900">
-                            {doctor.department}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {doctor.email}
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Content>
-              </Card>
-            ))}
-          </div>
-        )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewBalance(doctor)}
+                              className="flex items-center space-x-1"
+                            >
+                              <EyeIcon className="w-4 h-4" />
+                              <span>View Balance</span>
+                            </Button>
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={() => handleSetAllocation(doctor)}
+                              className="flex items-center space-x-1"
+                            >
+                              <PlusIcon className="w-4 h-4" />
+                              <span>Set Allocation</span>
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card.Content>
+        </Card>
       </div>
 
       {/* View Balance Modal */}
@@ -328,9 +342,9 @@ const AdminLeaveAllocation = () => {
           ) : (
             <>
               {/* Doctor Info */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium text-gray-900 mb-2">Doctor Information</h4>
-                <div className="text-sm text-gray-600 space-y-1">
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Doctor Information</h4>
+                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <p><strong>Name:</strong> {selectedDoctor?.name}</p>
                   <p><strong>Employee ID:</strong> {selectedDoctor?.employee_id}</p>
                   <p><strong>Department:</strong> {selectedDoctor?.department}</p>
@@ -340,11 +354,11 @@ const AdminLeaveAllocation = () => {
 
               {/* Leave Balance */}
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">Leave Allocations</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Leave Allocations</h4>
                 {doctorBalance.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="text-gray-400 text-4xl mb-2">📋</div>
-                    <p className="text-gray-600">No leave allocations set for {currentYear}</p>
+                    <div className="text-gray-400 dark:text-gray-500 text-4xl mb-2">📋</div>
+                    <p className="text-gray-600 dark:text-gray-400">No leave allocations set for {currentYear}</p>
                     <Button
                       variant="primary"
                       size="sm"
@@ -361,9 +375,9 @@ const AdminLeaveAllocation = () => {
                 ) : (
                   <div className="space-y-3">
                     {doctorBalance.map((balance) => (
-                      <div key={balance.category_id} className="border rounded-lg p-4">
+                      <div key={balance.category_id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-medium text-gray-900">{balance.category_name}</h5>
+                          <h5 className="font-medium text-gray-900 dark:text-gray-100">{balance.category_name}</h5>
                           <Button
                             variant="outline"
                             size="sm"
@@ -378,21 +392,21 @@ const AdminLeaveAllocation = () => {
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
-                            <p className="text-gray-600">Total Days</p>
-                            <p className="font-medium">{balance.total_days}</p>
+                            <p className="text-gray-600 dark:text-gray-400">Total Days</p>
+                            <p className="font-medium text-gray-900 dark:text-gray-100">{balance.total_days}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Used Days</p>
-                            <p className="font-medium text-orange-600">{balance.used_days}</p>
+                            <p className="text-gray-600 dark:text-gray-400">Used Days</p>
+                            <p className="font-medium text-orange-600 dark:text-orange-400">{balance.used_days}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600">Remaining Days</p>
-                            <p className="font-medium text-green-600">{balance.remaining_days}</p>
+                            <p className="text-gray-600 dark:text-gray-400">Remaining Days</p>
+                            <p className="font-medium text-green-600 dark:text-green-400">{balance.remaining_days}</p>
                           </div>
                         </div>
                         {/* Progress Bar */}
                         <div className="mt-3">
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div
                               className="bg-primary-600 h-2 rounded-full"
                               style={{
@@ -400,7 +414,7 @@ const AdminLeaveAllocation = () => {
                               }}
                             ></div>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                             {balance.total_days > 0 ? Math.round((balance.used_days / balance.total_days) * 100) : 0}% used
                           </p>
                         </div>
@@ -423,9 +437,9 @@ const AdminLeaveAllocation = () => {
       >
         <div className="space-y-4">
           {/* Doctor Info */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Doctor Information</h4>
-            <div className="text-sm text-gray-600">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Doctor Information</h4>
+            <div className="text-sm text-gray-600 dark:text-gray-300">
               <p><strong>Name:</strong> {selectedDoctor?.name}</p>
               <p><strong>Employee ID:</strong> {selectedDoctor?.employee_id}</p>
               <p><strong>Department:</strong> {selectedDoctor?.department}</p>
@@ -435,7 +449,7 @@ const AdminLeaveAllocation = () => {
           {/* Allocation Form */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Leave Category <span className="text-red-500">*</span>
               </label>
               <select
@@ -455,7 +469,7 @@ const AdminLeaveAllocation = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Total Days <span className="text-red-500">*</span>
               </label>
               <Input

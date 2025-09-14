@@ -9,7 +9,7 @@ import Card from '../components/common/Card';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { register: registerUser, isAuthenticated, loading } = useAuth();
+  const { register: registerUser, isAuthenticated, loading, user } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -22,10 +22,20 @@ const Register = () => {
   const password = watch('password');
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
+    if (isAuthenticated && user) {
+      // Only allow admin users to access registration
+      if (user.role === 'admin') {
+        // Admin can stay on register page to create new admin accounts
+        return;
+      } else {
+        // Non-admin users should be redirected
+        navigate('/dashboard');
+      }
+    } else if (!isAuthenticated) {
+      // If not authenticated, redirect to login
+      navigate('/login');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const onSubmit = async (data) => {
     const result = await registerUser(data);
@@ -50,10 +60,10 @@ const Register = () => {
             <span className="text-white font-bold text-lg">HLS</span>
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Create your account
+            Create Admin Account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Join Hospital Leave Management System
+            Register a new administrator for Hospital Leave Management System
           </p>
         </div>
 

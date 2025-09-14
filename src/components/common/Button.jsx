@@ -20,7 +20,7 @@ const Button = ({
     secondary: 'btn-secondary',
     success: 'btn-success',
     danger: 'btn-danger',
-    outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50',
+    outline: 'btn-outline',
   };
   
   const sizeClasses = {

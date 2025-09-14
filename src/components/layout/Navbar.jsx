@@ -48,16 +48,16 @@ const Navbar = ({ onMenuClick }) => {
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
-            {/* Notifications */}
-            <Button
+            {/* Notifications - Commented out for future use */}
+            {/* <Button
               variant="outline"
               size="sm"
               icon={BellIcon}
               className="p-2 relative"
             >
               {/* Notification badge */}
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </Button>
+              {/* <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </Button> */}
 
             {/* User menu */}
             <Menu as="div" className="relative">

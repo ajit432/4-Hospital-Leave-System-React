@@ -58,6 +58,7 @@ api.interceptors.response.use(
 // Auth API calls
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
+  registerDoctor: (doctorData) => api.post('/auth/register-doctor', doctorData),
   login: (credentials) => api.post('/auth/login', credentials),
   getProfile: () => api.get('/auth/profile'),
   logout: () => api.post('/auth/logout'),
@@ -76,12 +77,14 @@ export const doctorAPI = {
       },
     }),
   removeProfilePicture: () => api.delete('/doctor/remove-profile-picture'),
-  getAllDoctors: () => api.get('/doctor/all'),
+  getAllDoctors: (status = 'active') => api.get(`/doctor/all?status=${status}`),
+  deactivateDoctor: (doctorId) => api.put(`/doctor/${doctorId}/deactivate`),
+  reactivateDoctor: (doctorId) => api.put(`/doctor/${doctorId}/reactivate`),
 };
 
 // Leave API calls
 export const leaveAPI = {
-  getCategories: () => api.get('/leave/categories'),
+  getCategories: (status = 'active') => api.get(`/leave/categories?status=${status}`),
   applyLeave: (leaveData) => api.post('/leave/apply', leaveData),
   getMyLeaves: (params) => api.get('/leave/my-leaves', { params }),
   getLeaveBalance: () => api.get('/leave/balance'),
@@ -101,6 +104,8 @@ export const leaveAPI = {
   createLeaveCategory: (categoryData) => api.post('/leave/categories', categoryData),
   updateLeaveCategory: (id, categoryData) => api.put(`/leave/categories/${id}`, categoryData),
   deleteLeaveCategory: (id) => api.delete(`/leave/categories/${id}`),
+  activateLeaveCategory: (id) => api.put(`/leave/categories/${id}/activate`),
+  deactivateLeaveCategory: (id) => api.put(`/leave/categories/${id}/deactivate`),
 };
 
 export default api;

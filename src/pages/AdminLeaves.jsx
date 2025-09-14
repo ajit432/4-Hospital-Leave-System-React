@@ -83,8 +83,8 @@ const AdminLeaves = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Manage Leave Applications</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Manage Leave Applications</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Review and approve/reject leave applications from doctors
         </p>
       </div>
@@ -137,9 +137,9 @@ const AdminLeaves = () => {
         <Card>
           <Card.Content>
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📋</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No leave applications found</h3>
-              <p className="text-gray-600">
+              <div className="text-gray-400 dark:text-gray-500 text-6xl mb-4">📋</div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No leave applications found</h3>
+              <p className="text-gray-600 dark:text-gray-400">
                 {statusFilter 
                   ? `No ${statusFilter} leave applications to display`
                   : 'No leave applications have been submitted yet'
@@ -167,10 +167,10 @@ const AdminLeaves = () => {
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {leave.doctor_name}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             {leave.employee_id} • {leave.department}
                           </p>
                         </div>
@@ -215,31 +215,31 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
                     </div>
 
                     {/* Leave Type and Reason */}
-                    <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-900">{leave.category_name}</h4>
-                        <span className="text-sm font-semibold text-blue-600">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">{leave.category_name}</h4>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
                           {leave.total_days} {leave.total_days === 1 ? 'day' : 'days'}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-700">{leave.reason}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">{leave.reason}</p>
                     </div>
 
                     {/* Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                       <div>
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Duration
                         </div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
                           {formatDate(leave.start_date)} - {formatDate(leave.end_date)}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Applied Date
                         </div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
                           {formatDate(leave.applied_at)}
                         </div>
                       </div>
@@ -255,7 +255,7 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
             <Card>
               <Card.Content className="px-6 py-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     Showing page {pagination.page} of {pagination.pages} 
                     ({pagination.total} total applications)
                   </div>
@@ -294,9 +294,9 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
         {selectedLeave && (
           <div className="space-y-4">
             {/* Leave Details */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Application Details</h4>
-              <div className="text-sm text-gray-600 space-y-1">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Application Details</h4>
+              <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                 <p><strong>Doctor:</strong> {selectedLeave.doctor_name}</p>
                 <p><strong>Leave Type:</strong> {selectedLeave.category_name}</p>
                 <p><strong>Duration:</strong> {formatDate(selectedLeave.start_date)} - {formatDate(selectedLeave.end_date)}</p>

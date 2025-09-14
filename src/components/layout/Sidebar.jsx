@@ -98,31 +98,33 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </Link>
               );
             })}
-          </nav>
 
-          {/* User info */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center">
-              {user?.profile_picture ? (
-                <img
-                  className="w-10 h-10 rounded-full object-cover"
-                  src={`http://localhost:5000${user.profile_picture}`}
-                  alt={user.name}
-                />
-              ) : (
-                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium">
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </span>
+            {/* User Profile Section */}
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="px-3 py-2">
+                <div className="flex items-center">
+                  {user?.profile_picture ? (
+                    <img
+                      className="w-8 h-8 rounded-full object-cover"
+                      src={`http://localhost:5000${user.profile_picture}`}
+                      alt={user.name}
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium text-xs">
+                        {user?.name?.charAt(0)?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.name || 'Mithu'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role || 'Doctor'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.department || 'ENT'}</p>
+                  </div>
                 </div>
-              )}
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.department}</p>
               </div>
             </div>
-          </div>
+          </nav>
         </div>
       </div>
     </>

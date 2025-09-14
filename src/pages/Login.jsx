@@ -119,14 +119,14 @@ const Login = () => {
                 </label>
               </div>
 
-              <div className="text-sm">
+              {/* <div className="text-sm">
                 <Link
                   to="/forgot-password"
                   className="font-medium text-primary-600 hover:text-primary-500"
                 >
                   Forgot your password?
                 </Link>
-              </div>
+              </div> */}
             </div>
 
             <Button
@@ -140,20 +140,14 @@ const Login = () => {
 
             <div className="text-center">
               <span className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link
-                  to="/register"
-                  className="font-medium text-primary-600 hover:text-primary-500"
-                >
-                  Sign up
-                </Link>
+                Contact your administrator to create an account
               </span>
             </div>
           </form>
         </Card>
 
         {/* Demo credentials */}
-        <Card className="bg-blue-50 border-blue-200">
+        {/* <Card className="bg-blue-50 border-blue-200">
           <div className="text-center">
             <h3 className="text-sm font-medium text-blue-900 mb-2">Demo Credentials</h3>
             <div className="text-xs text-blue-700 space-y-1">
@@ -161,7 +155,8 @@ const Login = () => {
               <p><strong>Admin:</strong> admin@hospital.com / Admin123</p>
             </div>
           </div>
-        </Card>
+        </Card> */}
+
       </div>
     </div>
   );
