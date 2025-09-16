@@ -124,8 +124,8 @@ const Profile = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Profile</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Manage your personal information and account settings
         </p>
       </div>
@@ -158,9 +158,9 @@ const Profile = () => {
               )}
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-900">{user?.name}</h3>
-              <p className="text-sm text-gray-600 capitalize">{user?.role}</p>
-              <p className="text-sm text-gray-600">{user?.email}</p>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{user?.name}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{user?.role}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{user?.email}</p>
               <div className="mt-2">
                 {/* Hidden file input */}
                 <input
@@ -238,14 +238,14 @@ const Profile = () => {
                 type="email"
                 value={user?.email}
                 disabled
-                className="bg-gray-50"
+                className="bg-gray-50 dark:bg-gray-700"
               />
 
               <Input
                 label="Employee ID"
                 value={user?.employee_id}
                 disabled
-                className="bg-gray-50"
+                className="bg-gray-50 dark:bg-gray-700"
               />
 
               <Input
@@ -270,7 +270,7 @@ const Profile = () => {
                 label="Role"
                 value={user?.role?.charAt(0)?.toUpperCase() + user?.role?.slice(1)}
                 disabled
-                className="bg-gray-50"
+                className="bg-gray-50 dark:bg-gray-700"
               />
             </div>
 
@@ -302,8 +302,8 @@ const Profile = () => {
         <Card.Content>
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-medium text-gray-900">Password</h4>
-              <p className="text-sm text-gray-600">
+              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">Password</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Change your password to keep your account secure
               </p>
             </div>

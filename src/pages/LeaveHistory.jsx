@@ -57,8 +57,8 @@ const LeaveHistory = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leave History</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Leave History</h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             View all your leave applications and their status
           </p>
         </div>
@@ -112,9 +112,9 @@ const LeaveHistory = () => {
         <Card>
           <Card.Content>
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📋</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No leave applications found</h3>
-              <p className="text-gray-600">
+              <div className="text-gray-400 dark:text-gray-500 text-6xl mb-4">📋</div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No leave applications found</h3>
+              <p className="text-gray-600 dark:text-gray-400">
                 {statusFilter 
                   ? `No ${statusFilter} leave applications to display`
                   : 'You haven\'t applied for any leaves yet'
@@ -135,17 +135,17 @@ const LeaveHistory = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
-                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold text-sm">
+                          <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                            <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
                               {leave.category_name.charAt(0)}
                             </span>
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {leave.category_name}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             Applied on {formatDate(leave.applied_at)}
                           </p>
                         </div>
@@ -178,28 +178,28 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
                     </div>
 
                     {/* Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                       <div>
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Duration
                         </div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
                           {formatDate(leave.start_date)} - {formatDate(leave.end_date)}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Days
                         </div>
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {leave.total_days} {leave.total_days === 1 ? 'day' : 'days'}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Applied Date
                         </div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
                           {formatDate(leave.applied_at)}
                         </div>
                       </div>
@@ -207,11 +207,11 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
 
                     {/* Reason */}
                     {leave.reason && (
-                      <div className="pt-3 border-t border-gray-100">
-                        <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                      <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                           Reason
                         </div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                           {leave.reason}
                         </p>
                       </div>
@@ -227,7 +227,7 @@ ${leave.admin_comment ? `Admin Comment: ${leave.admin_comment}` : ''}
             <Card>
               <Card.Content className="px-6 py-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     Showing page {pagination.page} of {pagination.pages} 
                     ({pagination.total} total applications)
                   </div>

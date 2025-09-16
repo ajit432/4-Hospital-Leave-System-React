@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: 'http://localhost:5000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -18,15 +18,15 @@ api.interceptors.request.use(
     }
     
     // Log request details
-    console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    console.log(`line 21 🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
     if (config.data) {
-      console.log('📤 Request Data:', config.data);
+      console.log('line 23 📤 Request Data:', config.data);
     }
     
     return config;
   },
   (error) => {
-    console.error('❌ Request Error:', error);
+    console.error('line 29 ❌ Request Error:', error);
     return Promise.reject(error);
   }
 );
@@ -35,14 +35,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // Log response details
-    console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url}`);
-    console.log('📥 Response Data:', response.data);
+    console.log(`line 38 ✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url}`);
+    console.log('line 39 📥 Response Data:', response.data);
     
     return response;
   },
   (error) => {
     // Log error details
-    console.error('❌ API Error:', error.response?.status, error.response?.data?.message || error.message);
+    console.error('line 45 ❌ API Error:', error.response?.status, error.response?.data?.message || error.message);
     
     // Handle 401 unauthorized errors
     if (error.response?.status === 401) {
@@ -90,6 +90,7 @@ export const leaveAPI = {
   getLeaveBalance: () => api.get('/leave/balance'),
   getAllLeaves: (params) => api.get('/leave/all', { params }),
   reviewLeave: (id, reviewData) => api.put(`/leave/${id}/review`, reviewData),
+  checkDepartmentCoverage: (params) => api.get('/leave/department-coverage', { params }),
   // Admin specific endpoints
   getAllDoctors: () => api.get('/leave/doctors'),
   getDoctorLeaveBalance: (doctorId, params) => api.get(`/leave/doctors/${doctorId}/balance`, { 

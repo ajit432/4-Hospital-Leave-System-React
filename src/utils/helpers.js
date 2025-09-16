@@ -71,13 +71,13 @@ export const isValidImageFile = (file) => {
 export const getStatusClass = (status) => {
   switch (status?.toLowerCase()) {
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800';
     case 'approved':
-      return 'bg-green-100 text-green-800 border border-green-200';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800';
     case 'rejected':
-      return 'bg-red-100 text-red-800 border border-red-200';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800';
     default:
-      return 'bg-gray-100 text-gray-800 border border-gray-200';
+      return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
   }
 };
 
@@ -140,6 +140,92 @@ export const debounce = (func, wait) => {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
+};
+
+// Normalize date to YYYY-MM-DD format for consistent comparison
+export const normalizeDate = (dateString) => {
+  if (!dateString) return null;
+  
+  // If date is already in YYYY-MM-DD format, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString;
+  }
+  
+  // If date is in DD-MM-YYYY format, convert to YYYY-MM-DD
+  if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+    const [day, month, year] = dateString.split('-');
+    return `${year}-${month}-${day}`;
+  }
+  
+  // Try to parse as Date and format as YYYY-MM-DD
+  const date = new Date(dateString);
+  if (!isNaN(date.getTime())) {
+    return format(date, 'yyyy-MM-dd');
+  }
+  
+  return dateString;
+};
+
+// Leave validation helpers
+export const validateLeaveDates = (startDate, endDate) => {
+  const errors = {};
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  // Start date cannot be in the past
+  if (start < today) {
+    errors.startDate = 'Start date cannot be in the past. For retrospective applications, contact admin.';
+  }
+  
+  // End date must be >= start date
+  if (end < start) {
+    errors.endDate = 'End date must be on or after start date';
+  }
+  
+  // Check if dates are valid
+  if (isNaN(start.getTime())) {
+    errors.startDate = 'Invalid start date';
+  }
+  
+  if (isNaN(end.getTime())) {
+    errors.endDate = 'Invalid end date';
+  }
+  
+  return errors;
+};
+
+export const validateLeaveReason = (reason) => {
+  const errors = {};
+  
+  if (!reason || reason.trim().length === 0) {
+    errors.reason = 'Reason is required';
+  } else if (reason.trim().length < 10) {
+    errors.reason = 'Reason must be at least 10 characters';
+  } else if (reason.length > 500) {
+    errors.reason = 'Reason cannot exceed 500 characters';
+  }
+  
+  return errors;
+};
+
+export const validateLeaveCategory = (categoryId, categories) => {
+  const errors = {};
+  
+  if (!categoryId) {
+    errors.categoryId = 'Leave category is required';
+  } else {
+    const category = categories.find(cat => cat.id === parseInt(categoryId));
+    if (!category) {
+      errors.categoryId = 'Invalid leave category selected';
+    } else if (!category.is_active) {
+      errors.categoryId = 'Selected leave category is not active';
+    }
+  }
+  
+  return errors;
 };
 
 // Local storage helpers

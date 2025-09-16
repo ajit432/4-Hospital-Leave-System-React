@@ -76,12 +76,12 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg shadow-sm">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 rounded-lg shadow-sm">
         <div className="px-6 py-8 text-white">
           <h1 className="text-3xl font-bold">
             Welcome back, {user?.name}! 👋
           </h1>
-          <p className="mt-2 text-primary-100">
+          <p className="mt-2 text-primary-100 dark:text-primary-200">
             Here's what's happening with your leave applications
           </p>
         </div>
@@ -96,8 +96,8 @@ const Dashboard = () => {
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.name}</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{stat.value}</p>
               </div>
             </div>
           </Card>
@@ -114,17 +114,17 @@ const Dashboard = () => {
             <div className="space-y-4">
               {dashboardData?.leaveBalance?.length > 0 ? (
                 dashboardData.leaveBalance.map((balance) => (
-                  <div key={balance.category_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={balance.category_id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div>
-                      <p className="font-medium text-gray-900">{balance.category_name}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{balance.category_name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {balance.remaining_days} of {balance.total_days} days remaining
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-16 h-2 bg-gray-200 dark:bg-gray-600 rounded-full">
                         <div
-                          className="h-2 bg-primary-600 rounded-full"
+                          className="h-2 bg-primary-600 dark:bg-primary-500 rounded-full"
                           style={{
                             width: `${(balance.remaining_days / balance.total_days) * 100}%`,
                           }}
@@ -134,11 +134,11 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500 text-center py-4">No leave balance data available</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">No leave balance data available</p>
               )}
             </div>
             {user?.role === 'doctor' && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Link to="/leave/apply">
                   <Button className="w-full" icon={CalendarIcon}>
                     Apply for Leave
@@ -167,14 +167,14 @@ const Dashboard = () => {
             <div className="space-y-3">
               {dashboardData?.pendingLeaves?.length > 0 ? (
                 dashboardData.pendingLeaves.map((leave) => (
-                  <div key={leave.id} className="p-3 border border-gray-200 rounded-lg">
+                  <div key={leave.id} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium text-gray-900">{leave.category_name}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{leave.category_name}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
                           {formatDate(leave.start_date)} - {formatDate(leave.end_date)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-500">
                           {leave.total_days} day{leave.total_days > 1 ? 's' : ''}
                         </p>
                       </div>
@@ -185,7 +185,7 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500 text-center py-4">No pending applications</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">No pending applications</p>
               )}
             </div>
           </Card.Content>
@@ -208,37 +208,37 @@ const Dashboard = () => {
         </Card.Header>
         <Card.Content>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Dates
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Days
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Applied
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {dashboardData?.recentLeaves?.length > 0 ? (
                   dashboardData.recentLeaves.map((leave) => (
                     <tr key={leave.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                         {leave.category_name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(leave.start_date)} - {formatDate(leave.end_date)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {leave.total_days}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -246,14 +246,14 @@ const Dashboard = () => {
                           {leave.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(leave.applied_at)}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                       No recent leave history
                     </td>
                   </tr>
@@ -275,19 +275,19 @@ const Dashboard = () => {
               <Link to="/admin/leaves">
                 <Button variant="outline" className="w-full h-20 flex-col" icon={DocumentTextIcon}>
                   <span className="text-lg font-semibold">Manage Leaves</span>
-                  <span className="text-sm text-gray-500">Review applications</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Review applications</span>
                 </Button>
               </Link>
               <Link to="/doctors">
                 <Button variant="outline" className="w-full h-20 flex-col" icon={UsersIcon}>
                   <span className="text-lg font-semibold">View Doctors</span>
-                  <span className="text-sm text-gray-500">Manage doctor profiles</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Manage doctor profiles</span>
                 </Button>
               </Link>
               <Link to="/settings">
                 <Button variant="outline" className="w-full h-20 flex-col" icon={ClockIcon}>
                   <span className="text-lg font-semibold">Settings</span>
-                  <span className="text-sm text-gray-500">System configuration</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">System configuration</span>
                 </Button>
               </Link>
             </div>
