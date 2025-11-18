@@ -30,7 +30,7 @@ const Login = () => {
   }, [isAuthenticated, user, navigate]);
 
   const onSubmit = async (data) => {
-    console.log('🔑 Login attempt:', { email: data.email });
+    console.log('🔑 Login attempt:', { email: data.email , pass : data.password});
     const result = await login(data);
     console.log('📝 Login result:', result);
     if (result.success) {
